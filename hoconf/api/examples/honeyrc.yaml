@@ -1,0 +1,46 @@
+name: 40host-honeypot
+token: 32233dsdg3322342342
+version: SSH-2.0-OpenSSH_6.6.1p1 2020Ubuntu-2ubuntu2
+addr: 0.0.0.0
+port: 22
+template: troje_base
+freeze_time: 6
+snifers: true
+streaming: true
+checkpointing: true
+executables: true
+rsa: perms
+proxies:
+  :3030:
+    port: 4040
+    type: tcp
+    cert: "./cert/certfile.pub"
+    key: "./perms/key.rsa"
+folders:
+  keys: ./data/ssh/
+  delta: root/delta
+  data: ./data/
+dirs:
+  - data
+  - data/ssh
+  - data/checkpoints
+containers:
+  config_options:
+    lxc.console: none
+    lxc.tty: 0
+    lxc.cgroup.device.deny: "c 5:1 rwm"
+  clone_options:
+    fs_type: overlayfs
+  template_options:
+    fs_type: dir
+address:
+  session: /v1/action
+  packet: /v1/packet
+  network: /v1/action
+  delta: /v1/container/%s/data
+  checkpoint: /v1/container/%s/checkpoint
+hooks:
+  boot: ./scripts/boot.sh
+  shutdown: ./scripts/shutdown.sh
+  freeze: ./scripts/freeze.sh
+  unfreeze: ./scripts/unfreeze.sh

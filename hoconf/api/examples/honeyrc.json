@@ -1,0 +1,58 @@
+{
+  "name":"5060-honeypot-provider",
+  "token": "322333322342342",
+  "version": "SSH-2.0-OpenSSH_6.6.1p1 2020Ubuntu-2ubuntu2",
+  "template":"troje_base",
+  "addr": "0.0.0.0",
+  "rsa":"perms",
+  "port": 8099,
+  "freeze_time": 6,
+  "dail_ms":5,
+  "conn_ms":15,
+  "server_ms":25,
+  "snifers": true,
+  "logging": true,
+  "streaming": true,
+  "checkpointing": true,
+  "executables": true,
+  "dirs": ["data","data/ssh","data/checkpoints"],
+  "folders": {
+    "keys": "./data/ssh/",
+    "delta": "root/delta",
+    "data": "./data/"
+  },
+  "proxies":{
+    ":3030":{
+      "port":"4040",
+      "type":"tcp",
+      "cert": "./certs/cert.pub",
+      "key": "./certs/key.pub"
+    }
+  },
+  "containers": {
+    "config_options":{
+    	"lxc.console": "none",
+    	"lxc.tty": "0",
+    	"lxc.cgroup.devices.deny": "c 5:1 rwm"
+    },
+    "clone_options": {
+      "fs_type": "overlayfs"
+    },
+    "template_options": {
+      "fs_type": "dir"
+    }
+  },
+  "address": {
+    "session": "/v1/action",
+    "packet": "/v1/packet",
+    "network": "/v1/action",
+    "delta": "/v1/container/%s/data",
+    "checkpoint": "/v1/container/%s/checkpoint"
+  },
+  "hooks": {
+    "boot": "./hooks/boot.sh",
+    "shutdown": "./hooks/shutdown.sh",
+    "freeze": "./hooks/freeze.sh",
+    "unfreeze": "./hooks/unfreeze.sh"
+  }
+}
